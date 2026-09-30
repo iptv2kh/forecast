@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Before — Cambodia Weather</title>
+<meta name="description" content="Before — Cambodia weather forecast dashboard for Phnom Penh and all regions of Cambodia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Khmer:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f5fb;--card:#ffffff;--card2:#f0eef7;--text:#2d3440;--muted:#7c8491;
+  --line:#e6e1ee;--purple:#9b93df;--blue:#8dbce5;--mint:#83c6b9;--peach:#efbd98;
+  --sun:#f3cf82;--danger:#dc8981;--shadow:0 14px 38px rgba(80,67,120,.09);
+}
+[data-theme="dark"]{
+  --bg:#171922;--card:#22252f;--card2:#2b2e39;--text:#eef0f5;--muted:#a8adba;
+  --line:#383c49;--purple:#aaa3eb;--blue:#9bc9ef;--mint:#8ed0c3;--peach:#efc29e;
+  --sun:#f3d68e;--danger:#e59891;--shadow:0 16px 40px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:
+  radial-gradient(circle at 4% 0%,rgba(176,166,236,.20),transparent 28%),
+  radial-gradient(circle at 96% 0%,rgba(128,203,189,.16),transparent 25%),var(--bg);
+  color:var(--text);font-family:Inter,"Noto Sans Khmer",sans-serif;
+}
+.app{max-width:1500px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;font-size:25px;background:linear-gradient(135deg,#c7c0f0,#9ed9ce);box-shadow:var(--shadow)}
+h1{margin:0;font-size:26px;letter-spacing:-.04em}
+.brand p{margin:3px 0 0;color:var(--muted);font-size:11px}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+button,select{
+  border:1px solid var(--line);background:var(--card);color:var(--text);
+  border-radius:12px;padding:9px 12px;font:inherit;font-size:12px;cursor:pointer
+}
+button:hover{transform:translateY(-1px)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.hero-grid{grid-template-columns:1.25fr .75fr}
+.hero{padding:25px;background:linear-gradient(135deg,rgba(190,182,239,.28),rgba(132,203,190,.15)),var(--card)}
+.eyebrow{font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--muted)}
+.hero-row{display:flex;justify-content:space-between;align-items:center;gap:20px}
+.temp{font-size:72px;font-weight:800;line-height:.9;letter-spacing:-.08em;margin:13px 0 8px}
+.condition{font-size:18px;font-weight:700}
+.weather-art{font-size:88px;filter:drop-shadow(0 12px 15px rgba(70,60,110,.15))}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.chip{background:var(--card2);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:10px}
+.snapshot{padding:20px}
+.snapshot h3{margin:0 0 13px;font-size:15px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.stat{background:var(--card2);padding:12px;border-radius:15px}
+.stat span{display:block;color:var(--muted);font-size:10px}
+.stat b{display:block;margin-top:5px;font-size:16px}
+.section{margin-top:22px}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:0 2px 11px}
+.section-head h2{margin:0;font-size:19px}
+.section-head p{margin:4px 0 0;color:var(--muted);font-size:10px}
+.badge{font-size:9px;padding:6px 9px;border-radius:999px;background:rgba(131,198,185,.16);color:#5b9c91;font-weight:800}
+.forecast{grid-template-columns:repeat(7,1fr)}
+.day-card{padding:14px}
+.day{font-size:12px;font-weight:700}.date{font-size:9px;color:var(--muted);margin-top:2px}
+.icon{font-size:31px;margin:11px 0}
+.high{font-size:19px;font-weight:800}.low{font-size:11px;color:var(--muted)}
+.rainbar{height:5px;background:var(--card2);border-radius:8px;overflow:hidden;margin:11px 0 5px}
+.rainbar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple))}
+.two{grid-template-columns:1fr 1fr}
+.panel{padding:17px}
+.chart{height:245px}
+.chart svg{width:100%;height:100%}
+.legend{display:flex;gap:13px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--purple);margin-right:4px}
+.dot.blue{background:var(--blue)}
+.dot.mint{background:var(--mint)}
+.hourly{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:720px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:10px}
+th{color:var(--muted);font-weight:600}
+td b{font-size:14px}
+.regions{grid-template-columns:repeat(4,1fr)}
+.region{padding:16px}
+.region-top{display:flex;justify-content:space-between;gap:8px}
+.region h3{margin:0;font-size:13px}
+.region small{color:var(--muted)}
+.region-temp{font-size:28px;font-weight:800;margin:12px 0 4px}
+.region-info{display:flex;gap:9px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+.region .mini{margin-top:11px;height:5px;background:var(--card2);border-radius:8px;overflow:hidden}
+.region .mini i{display:block;height:100%;background:linear-gradient(90deg,var(--mint),var(--blue))}
+footer{padding:24px 2px 8px;color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap}
+@media(max-width:1050px){.hero-grid,.two{grid-template-columns:1fr}.forecast{grid-template-columns:repeat(4,1fr)}.regions{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.app{padding:11px}.forecast{grid-template-columns:repeat(2,1fr)}.regions{grid-template-columns:1fr 1fr}.temp{font-size:55px}.weather-art{font-size:60px}}
+@media(max-width:430px){.regions{grid-template-columns:1fr}.hero-row{align-items:flex-start}.weather-art{font-size:45px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand">
+    <div class="logo">☁️</div>
+    <div><h1>Before</h1><p id="subtitle">Cambodia Weather Forecast</p></div>
+  </div>
+  <div class="controls">
+    <select id="lang"><option value="en">English</option><option value="km">ខ្មែរ</option></select>
+    <button id="theme">◐ <span id="themeText">Dark</span></button>
+    <button id="refresh">↻ <span id="refreshText">Refresh</span></button>
+  </div>
+</header>
+
+<section class="grid hero-grid">
+  <div class="card hero">
+    <div class="eyebrow" id="liveLabel">PHNOM PENH · LIVE</div>
+    <div class="hero-row">
+      <div>
+        <div class="temp" id="temp">--°</div>
+        <div class="condition" id="condition">Loading weather…</div>
+        <div class="chips">
+          <span class="chip" id="feels">Feels --°</span>
+          <span class="chip" id="humidity">Humidity --%</span>
+          <span class="chip" id="wind">Wind -- km/h</span>
+          <span class="chip" id="rain">Rain --%</span>
+        </div>
+      </div>
+      <div class="weather-art" id="weatherArt">🌤️</div>
+    </div>
+  </div>
+  <div class="card snapshot">
+    <h3 id="snapshotTitle">Operational snapshot</h3>
+    <div class="stats">
+      <div class="stat"><span id="pressureLabel">Pressure</span><b id="pressure">-- hPa</b></div>
+      <div class="stat"><span id="cloudLabel">Cloud cover</span><b id="cloud">--%</b></div>
+      <div class="stat"><span id="visibilityLabel">Visibility</span><b id="visibility">-- km</b></div>
+      <div class="stat"><span id="gustLabel">Wind gust</span><b id="gust">-- km/h</b></div>
+      <div class="stat"><span id="sunriseLabel">Sunrise</span><b id="sunrise">--:--</b></div>
+      <div class="stat"><span id="updateLabel">Updated</span><b id="updated">--:--</b></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div><h2 id="forecastTitle">7-day forecast</h2><p id="forecastSub">Phnom Penh · temperature and precipitation outlook</p></div>
+    <span class="badge" id="autoBadge">AUTO · 60 MIN</span>
+  </div>
+  <div class="grid forecast" id="forecast"></div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div><h2 id="hourTitle">Next 12 hours</h2><p id="hourSub">Detailed near-term forecast for Phnom Penh</p></div>
+  </div>
+  <div class="card panel hourly">
+    <table>
+      <thead><tr><th id="timeHead">Time</th><th id="tempHead">Temp</th><th id="rainHead">Rain</th><th id="windHead">Wind</th><th id="weatherHead">Weather</th></tr></thead>
+      <tbody id="hourly"></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div><h2 id="chartTitle">24-hour weather trend</h2><p id="chartSub">Temperature and precipitation probability</p></div>
+  </div>
+  <div class="grid two">
+    <div class="card panel"><div class="chart" id="temperatureChart"></div><div class="legend"><span><i class="dot"></i>Temperature °C</span><span><i class="dot blue"></i>Rain probability %</span></div></div>
+    <div class="card panel"><div class="chart" id="windChart"></div><div class="legend"><span><i class="dot mint"></i>Wind km/h</span><span><i class="dot blue"></i>Precipitation mm</span></div></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <div><h2 id="regionsTitle">Cambodia regional summary</h2><p id="regionsSub">Representative locations from all major regions</p></div>
+  </div>
+  <div class="grid regions" id="regions"></div>
+</section>
+
+<footer>
+  <div><b>Before</b> · <span id="footerText">Cambodia weather dashboard · automatically refreshed every hour</span></div>
+  <div>Forecast data: Open-Meteo · No Cambodia weather map included in this version</div>
+</footer>
+</div>
+
+<script>
+const locations=[
+["Phnom Penh","ភ្នំពេញ",11.5564,104.9282,"Capital"],
+["Banteay Meanchey","បន្ទាយមានជ័យ",13.75,102.99,"Northwest"],
+["Battambang","បាត់ដំបង",13.10,103.20,"Northwest"],
+["Kampong Cham","កំពង់ចាម",11.99,105.46,"East"],
+["Kampong Chhnang","កំពង់ឆ្នាំង",12.25,104.67,"Central"],
+["Kampong Speu","កំពង់ស្ពឺ",11.45,104.52,"Southwest"],
+["Kampong Thom","កំពង់ធំ",12.25,104.89,"Central"],
+["Kampot","កំពត",10.61,104.18,"Coastal"],
+["Kandal","កណ្ដាល",11.36,104.96,"Capital"],
+["Kep","កែប",10.48,104.32,"Coastal"],
+["Koh Kong","កោះកុង",11.62,102.98,"Coastal"],
+["Kratie","ក្រចេះ",12.49,106.02,"East"],
+["Mondulkiri","មណ្ឌលគិរី",12.46,107.19,"East"],
+["Oddar Meanchey","ឧត្តរមានជ័យ",14.16,103.92,"Northwest"],
+["Pailin","ប៉ៃលិន",12.85,102.61,"Northwest"],
+["Preah Sihanouk","ព្រះសីហនុ",10.63,103.52,"Coastal"],
+["Preah Vihear","ព្រះវិហារ",13.80,104.98,"North"],
+["Prey Veng","ព្រៃវែង",11.49,105.33,"East"],
+["Pursat","ពោធិ៍សាត់",12.54,103.92,"Northwest"],
+["Ratanakiri","រតនគិរី",13.74,106.98,"East"],
+["Siem Reap","សៀមរាប",13.36,103.86,"North"],
+["Stung Treng","ស្ទឹងត្រែង",13.52,105.97,"North"],
+["Svay Rieng","ស្វាយរៀង",11.09,105.80,"East"],
+["Takeo","តាកែវ",10.99,104.78,"South"],
+["Tboung Khmum","ត្បូងឃ្មុំ",11.90,105.72,"East"]
+];
+
+const L={
+en:{
+subtitle:"Cambodia Weather Forecast",dark:"Dark",light:"Light",refresh:"Refresh",
+live:"PHNOM PENH · LIVE",snapshot:"Operational snapshot",pressure:"Pressure",cloud:"Cloud cover",
+visibility:"Visibility",gust:"Wind gust",sunrise:"Sunrise",updated:"Updated",
+forecast:"7-day forecast",forecastSub:"Phnom Penh · temperature and precipitation outlook",
+hour:"Next 12 hours",hourSub:"Detailed near-term forecast for Phnom Penh",
+time:"Time",temp:"Temp",rain:"Rain",wind:"Wind",weather:"Weather",
+chart:"24-hour weather trend",chartSub:"Temperature and precipitation probability",
+regions:"Cambodia regional summary",regionsSub:"Representative locations from all major regions",
+footer:"Cambodia weather dashboard · automatically refreshed every hour"
+},
+km:{
+subtitle:"ការព្យាករណ៍អាកាសធាតុកម្ពុជា",dark:"ងងឹត",light:"ភ្លឺ",refresh:"ធ្វើបច្ចុប្បន្នភាព",
+live:"ភ្នំពេញ · បច្ចុប្បន្ន",snapshot:"ស្ថានភាពប្រតិបត្តិការ",pressure:"សម្ពាធ",cloud:"គម្របពពក",
+visibility:"ទិដ្ឋភាពមើលឃើញ",gust:"ខ្យល់កន្ត្រាក់",sunrise:"ថ្ងៃរះ",updated:"បច្ចុប្បន្នភាព",
+forecast:"ការព្យាករណ៍ ៧ ថ្ងៃ",forecastSub:"ភ្នំពេញ · ទស្សនវិស័យសីតុណ្ហភាព និងភ្លៀង",
+hour:"១២ ម៉ោងបន្ទាប់",hourSub:"ការព្យាករណ៍រយៈពេលខ្លីសម្រាប់ភ្នំពេញ",
+time:"ម៉ោង",temp:"សីតុណ្ហភាព",rain:"ភ្លៀង",wind:"ខ្យល់",weather:"អាកាសធាតុ",
+chart:"និន្នាការអាកាសធាតុ ២៤ ម៉ោង",chartSub:"សីតុណ្ហភាព និងប្រូបាបភ្លៀង",
+regions:"សង្ខេបអាកាសធាតុតាមតំបន់កម្ពុជា",regionsSub:"ទីតាំងតំណាងពីតំបន់សំខាន់ៗទូទាំងប្រទេស",
+footer:"ផ្ទាំងព័ត៌មានអាកាសធាតុកម្ពុជា · ធ្វើបច្ចុប្បន្នភាពរៀងរាល់ម៉ោង"
+}};
+
+let lang=localStorage.getItem("before-lang")||"en";
+let dark=localStorage.getItem("before-theme")==="dark";
+let dataset=[];
+
+const $=id=>document.getElementById(id);
+
+function applyUI(){
+  document.documentElement.dataset.theme=dark?"dark":"light";
+  document.documentElement.lang=lang;
+  $("lang").value=lang;
+  const x=L[lang];
+  const map={
+    subtitle:"subtitle",snapshot:"snapshotTitle",pressure:"pressureLabel",cloud:"cloudLabel",
+    visibility:"visibilityLabel",gust:"gustLabel",sunrise:"sunriseLabel",updated:"updateLabel",
+    forecast:"forecastTitle",forecastSub:"forecastSub",hour:"hourTitle",hourSub:"hourSub",
+    time:"timeHead",temp:"tempHead",rain:"rainHead",wind:"windHead",weather:"weatherHead",
+    chart:"chartTitle",chartSub:"chartSub",regions:"regionsTitle",regionsSub:"regionsSub",
+    footer:"footerText",live:"liveLabel"
+  };
+  Object.entries(map).forEach(([a,b])=>$(b).textContent=x[a]);
+  $("themeText").textContent=dark?x.light:x.dark;
+  $("refreshText").textContent=x.refresh;
+}
+
+function weatherCode(code){
+  const m={
+    0:["☀️","Clear","មេឃស្រឡះ"],1:["🌤️","Mainly clear","មេឃស្រឡះជាច្រើន"],
+    2:["⛅","Partly cloudy","មានពពកមួយផ្នែក"],3:["☁️","Overcast","មានពពកច្រើន"],
+    45:["🌫️","Fog","អ័ព្ទ"],48:["🌫️","Fog","អ័ព្ទ"],
+    51:["🌦️","Drizzle","ភ្លៀងរលឹម"],53:["🌦️","Drizzle","ភ្លៀងរលឹម"],55:["🌦️","Drizzle","ភ្លៀងរលឹម"],
+    61:["🌦️","Rain","ភ្លៀង"],63:["🌧️","Rain","ភ្លៀង"],65:["🌧️","Heavy rain","ភ្លៀងខ្លាំង"],
+    71:["🌨️","Snow","ព្រិល"],73:["🌨️","Snow","ព្រិល"],75:["🌨️","Heavy snow","ព្រិលខ្លាំង"],
+    80:["🌦️","Showers","ភ្លៀងជាបន្តបន្ទាប់"],81:["🌧️","Showers","ភ្លៀងជាបន្តបន្ទាប់"],
+    82:["⛈️","Heavy showers","ភ្លៀងខ្លាំង"],95:["⛈️","Thunderstorm","ព្យុះផ្គររន្ទះ"],
+    96:["⛈️","Thunderstorm + hail","ព្យុះផ្គររន្ទះ + ព្រិល"],99:["⛈️","Severe thunderstorm","ព្យុះផ្គររន្ទះខ្លាំង"]
+  };
+  return m[code]||["🌤️","Variable","ប្រែប្រួល"];
+}
+
+function clock(s){
+  return new Date(s).toLocaleTimeString(lang==="km"?"km-KH":"en-US",{hour:"2-digit",minute:"2-digit"});
+}
+
+function dayName(s){
+  return new Date(s+"T12:00:00").toLocaleDateString(lang==="km"?"km-KH":"en-US",{weekday:"short"});
+}
+
+function chart(el,labels,a,b){
+  const w=900,h=245,p=28;
+  const all=[...a,...b], max=Math.max(...all,1), min=0;
+  const points=v=>v.map((n,i)=>{
+    const x=p+i*(w-2*p)/Math.max(v.length-1,1);
+    const y=h-p-(n-min)/(max-min)*(h-2*p);
+    return `${x},${y}`;
+  }).join(" ");
+  const dots=v=>v.map((n,i)=>{
+    const x=p+i*(w-2*p)/Math.max(v.length-1,1);
+    const y=h-p-(n-min)/(max-min)*(h-2*p);
+    return `<circle cx="${x}" cy="${y}" r="3.1" fill="var(--purple)"/>`;
+  }).join("");
+  $(el).innerHTML=`<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <g stroke="var(--line)" stroke-width="1">
+      <line x1="${p}" y1="45" x2="${w-p}" y2="45"/>
+      <line x1="${p}" y1="105" x2="${w-p}" y2="105"/>
+      <line x1="${p}" y1="165" x2="${w-p}" y2="165"/>
+    </g>
+    <polyline fill="none" stroke="var(--purple)" stroke-width="4" points="${points(a)}"/>
+    <polyline fill="none" stroke="var(--blue)" stroke-width="3" points="${points(b)}"/>
+    ${dots(a)}
+    <g fill="var(--muted)" font-size="17">
+      ${labels.map((x,i)=>`<text x="${p+i*(w-2*p)/Math.max(labels.length-1,1)}" y="${h-6}" text-anchor="middle">${x}</text>`).join("")}
+    </g>
+  </svg>`;
+}
+
+function render(){
+  if(!dataset.length)return;
+  const d=dataset[0],c=d.current,ci=weatherCode(c.weather_code);
+
+  $("temp").textContent=Math.round(c.temperature_2m)+"°";
+  $("condition").textContent=lang==="km"?ci[2]:ci[1];
+  $("weatherArt").textContent=ci[0];
+  $("feels").textContent=`Feels ${Math.round(c.apparent_temperature)}°`;
+  $("humidity").textContent=`Humidity ${c.relative_humidity_2m}%`;
+  $("wind").textContent=`Wind ${Math.round(c.wind_speed_10m)} km/h`;
+  $("rain").textContent=`Rain ${d.hourly.precipitation_probability[0]}%`;
+
+  $("pressure").textContent=Math.round(c.surface_pressure)+" hPa";
+  $("cloud").textContent=Math.round(c.cloud_cover)+"%";
+  $("visibility").textContent=(c.visibility/1000).toFixed(1)+" km";
+  $("gust").textContent=Math.round(c.wind_gusts_10m)+" km/h";
+  $("sunrise").textContent=clock(d.daily.sunrise[0]);
+  $("updated").textContent=clock(new Date().toISOString());
+
+  const q=d.daily;
+  $("forecast").innerHTML=q.time.map((date,i)=>{
+    const w=weatherCode(q.weather_code[i]);
+    return `<div class="card day-card">
+      <div class="day">${dayName(date)}</div>
+      <div class="date">${date}</div>
+      <div class="icon">${w[0]}</div>
+      <span class="high">${Math.round(q.temperature_2m_max[i])}°</span>
+      <span class="low">${Math.round(q.temperature_2m_min[i])}°</span>
+      <div class="rainbar"><i style="width:${q.precipitation_probability_max[i]}%"></i></div>
+      <div style="font-size:10px;color:var(--muted)">${q.precipitation_probability_max[i]}% · ${q.precipitation_sum[i].toFixed(1)} mm</div>
+    </div>`;
+  }).join("");
+
+  const h=d.hourly;
+  let start=h.time.findIndex(x=>new Date(x)>=new Date());
+  if(start<0)start=0;
+  const H=h.time.slice(start,start+24);
+  const T=h.temperature_2m.slice(start,start+24);
+  const R=h.precipitation_probability.slice(start,start+24);
+  const W=h.wind_speed_10m.slice(start,start+24);
+  const P=h.precipitation.slice(start,start+24);
+
+  $("hourly").innerHTML=H.slice(0,12).map((x,i)=>{
+    const w=weatherCode(h.weather_code[start+i]);
+    return `<tr><td>${clock(x)}</td><td><b>${Math.round(T[i])}°</b></td><td>${R[i]}% · ${P[i].toFixed(1)} mm</td><td>${Math.round(W[i])} km/h</td><td>${w[0]} ${lang==="km"?w[2]:w[1]}</td></tr>`;
+  }).join("");
+
+  const labels=H.map(x=>new Date(x).toLocaleTimeString(lang==="km"?"km-KH":"en-US",{hour:"2-digit"}).replace(" ",""));
+  chart("temperatureChart",labels,T,R);
+  chart("windChart",labels,W,P);
+
+  renderRegions();
+}
+
+function renderRegions(){
+  const selected=["Battambang","Siem Reap","Preah Vihear","Stung Treng","Kratie","Kampong Cham","Phnom Penh","Kampong Speu","Kampot","Preah Sihanouk","Koh Kong","Takeo"];
+  $("regions").innerHTML=selected.map(name=>{
+    const i=locations.findIndex(x=>x[0]===name),d=dataset[i],c=d.current,q=d.daily,w=weatherCode(c.weather_code);
+    const rain=q.precipitation_probability_max[0];
+    return `<div class="card region">
+      <div class="region-top"><div><h3>${lang==="km"?locations[i][1]:name}</h3><small>${locations[i][4]}</small></div><span>${w[0]}</span></div>
+      <div class="region-temp">${Math.round(c.temperature_2m)}°</div>
+      <div style="font-size:10px">${lang==="km"?w[2]:w[1]}</div>
+      <div class="region-info"><span>💧 ${c.relative_humidity_2m}%</span><span>🌧️ ${rain}%</span><span>💨 ${Math.round(c.wind_speed_10m)} km/h</span></div>
+      <div class="mini"><i style="width:${rain}%"></i></div>
+    </div>`;
+  }).join("");
+}
+
+async function loadWeather(){
+  $("condition").textContent=lang==="km"?"កំពុងទាញយកទិន្នន័យ…":"Loading weather…";
+  try{
+    const lat=locations.map(x=>x[2]).join(",");
+    const lon=locations.map(x=>x[3]).join(",");
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&timezone=Asia%2FPhnom_Penh&forecast_days=7&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,surface_pressure,cloud_cover,wind_speed_10m,wind_gusts_10m,visibility&hourly=temperature_2m,precipitation_probability,precipitation,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,sunrise`;
+    const response=await fetch(url);
+    if(!response.ok)throw new Error("Weather API request failed");
+    const result=await response.json();
+    dataset=Array.isArray(result)?result:[result];
+    render();
+  }catch(error){
+    console.error(error);
+    $("condition").textContent=lang==="km"?"មិនអាចទាញយកទិន្នន័យបាន":"Weather data unavailable";
+  }
+}
+
+$("lang").addEventListener("change",e=>{
+  lang=e.target.value;localStorage.setItem("before-lang",lang);applyUI();render();
+});
+$("theme").addEventListener("click",()=>{
+  dark=!dark;localStorage.setItem("before-theme",dark?"dark":"light");applyUI();
+});
+$("refresh").addEventListener("click",loadWeather);
+
+applyUI();
+loadWeather();
+setInterval(loadWeather,3600000);
+</script>
+</body>
+</html>
